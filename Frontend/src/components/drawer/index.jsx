@@ -28,7 +28,7 @@ import {
   Person,
 } from "@mui/icons-material";
 import GraphicEqIcon from "@mui/icons-material/GraphicEq";
-import { Popover, Stack } from "@mui/material";
+import { Popover, Stack, Tooltip } from "@mui/material";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
@@ -129,18 +129,19 @@ export default function MiniDrawer({ pages }) {
   };
 
   const handleProfile = () => {
-    // navigate("/dashboard/profile");
+    navigate("/dashboard/profile");
     handleClose();
   };
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <ToastContainer/>
+      <ToastContainer />
       <AppBar position="fixed" open={open}>
         <Toolbar
           sx={{
-            backgroundImage:"linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
+            backgroundImage:
+              "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
             display: "flex",
             justifyContent: "space-between",
           }}
@@ -247,83 +248,94 @@ export default function MiniDrawer({ pages }) {
             {[
               {
                 name: "CRM system",
-                path: "crmform",
+                path: "",
                 icons: <ListAlt />,
               },
               {
                 name: "Company financials ",
-                // path: "data-quality",
+                path: "companyfinance",
                 icons: <Analytics />,
               },
-              {
-                name: "User login ",
-                // path: "data-matrix-summary",
-                icons: <AutoGraph />,
-              },
-              {
-                name: "Project traction",
-                // path: "datamatrixsummarytable-back",
-                icons: <GraphicEqIcon />,
-              },
+              // {
+              //   name: "User login ",
+              //   // path: "data-matrix-summary",
+              //   icons: <AutoGraph />,
+              // },
+              // {
+              //   name: "Project traction",
+              //   // path: "datamatrixsummarytable-back",
+              //   icons: <GraphicEqIcon />,
+              // },
               {
                 name: "Project progression",
-                // path: "report",
+                path: "projectprogression",
                 icons: <FactCheck />,
               },
-              { name: "Project update", icons: <FactCheck /> },
+              {
+                name: "Project update",
+                path: "projectupdate",
+                icons: <AutoGraph />,
+              },
             ].map((text, index) => (
               <NavLink
                 to={text.path}
                 style={{ color: "inherit", textDecoration: "none" }}
                 key={index}
               >
-                <ListItem
-                  disablePadding
-                  sx={{
-                    display: "block",
-                    borderBottom:
-                      location.pathname === "/dashboard/" + text.path &&
-                      "3px solid transparent",
-                    borderImage: "linear-gradient(to left, pink,lightblue)",
-                    borderImageSlice: 1,
-                    ":hover": {
-                      borderImageSlice: 1,
-                      borderBottom: "3px solid transparent",
-                    },
-                    bgcolor:
-                      location.pathname === "/dashboard/" + text.path &&
-                      "#F5F5F5",
-                  }}
-                >
-                  <ListItemButton
+                <Tooltip title={text.name} placement="right-start">
+                  <ListItem
+                    disablePadding
                     sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
+                      display: "block",
+                      borderBottom:
+                        location.pathname === "/dashboard/" + text.path &&
+                        "3px solid transparent",
+                      borderImage: "linear-gradient(to left, pink,lightblue)",
+                      borderImageSlice: 1,
+                      ":hover": {
+                        borderImageSlice: 1,
+                        borderBottom: "3px solid transparent",
+                      },
+                      bgcolor:
+                        location.pathname === "/dashboard/" + text.path &&
+                        "#F5F5F5",
                     }}
                   >
-                    <ListItemIcon
+                    <ListItemButton
                       sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
+                        minHeight: 48,
+                        justifyContent: open ? "initial" : "center",
+                        px: 2.5,
                       }}
                     >
-                      {text.icons}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={text.name}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : "auto",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {text.icons}
+                      </ListItemIcon>
+
+                      <ListItemText
+                        primary={text.name}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </Tooltip>
               </NavLink>
             ))}
           </List>
           <Divider />
           <List>
             {[
-              { name: "Profile Edit", icon: <Person2Icon /> },
+              {
+                name: "Profile Edit",
+                path: "editprofile",
+                icon: <Person2Icon />,
+              },
               {
                 name: "Logout",
                 icon: <LogoutIcon />,
@@ -339,46 +351,48 @@ export default function MiniDrawer({ pages }) {
                 to={text.path}
                 style={{ color: "black", textDecoration: "none" }}
               >
-                <ListItem
-                  disablePadding
-                  sx={{
-                    display: "block",
-                    borderBottom:
-                      location.pathname === "/dashboard/" + text.path &&
-                      "3px solid transparent",
-                    borderImage: "linear-gradient(to left, pink,lightblue)",
-                    borderImageSlice: 1,
-                    ":hover": {
-                      borderImageSlice: 1,
-                      borderBottom: "3px solid transparent",
-                    },
-                    bgcolor:
-                      location.pathname === "/dashboard/" + text.path &&
-                      "#F5F5F5",
-                  }}
-                >
-                  <ListItemButton
+                <Tooltip title={text.name} placement="right-start">
+                  <ListItem
+                    disablePadding
                     sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
+                      display: "block",
+                      borderBottom:
+                        location.pathname === "/dashboard/" + text.path &&
+                        "3px solid transparent",
+                      borderImage: "linear-gradient(to left, pink,lightblue)",
+                      borderImageSlice: 1,
+                      ":hover": {
+                        borderImageSlice: 1,
+                        borderBottom: "3px solid transparent",
+                      },
+                      bgcolor:
+                        location.pathname === "/dashboard/" + text.path &&
+                        "#F5F5F5",
                     }}
                   >
-                    <ListItemIcon
+                    <ListItemButton
                       sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
+                        minHeight: 48,
+                        justifyContent: open ? "initial" : "center",
+                        px: 2.5,
                       }}
                     >
-                      {text.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={text.name}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : "auto",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {text.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={text.name}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </Tooltip>
               </NavLink>
             ))}
           </List>

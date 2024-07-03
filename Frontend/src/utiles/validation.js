@@ -28,6 +28,17 @@ export const registerValidateSchema = yup.object({
     .required("Confirm Password is required"),
 });
 
+export const updateValidateSchema = yup.object({
+  first_name: yup
+    .string()
+    .min(3, "FirstName must be atleast 3 characters")
+    .required("FirstName is Required"),
+  last_name: yup
+    .string()
+    .min(3, "LastName must be atleast 3 characters")
+    .optional("LastName is Required"),
+});
+
 export const roleValidationSchema = yup.object({
   role: yup.string().required("Role is Required"),
 });
@@ -56,6 +67,10 @@ export const RegisterDetails = [
   { label: "Email", id: "email", type: "email" },
   { label: "Password", id: "password", type: "password" },
   { label: "Confirm Password", id: "confirm_password", type: "password" },
+];
+export const UpdateDetails = [
+  { label: "First Name", id: "first_name", type: "text" },
+  { label: "Last Name", id: "last_name", type: "text" },
 ];
 export const LoginDetails = [
   { label: "Email", id: "email", type: "text" },
