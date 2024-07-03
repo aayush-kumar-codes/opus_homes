@@ -25,9 +25,9 @@ const ProfileDetails = () => {
 
   const roleData = () => {
     if (userData?.role) {
-      if (userData?.role === "1") {
+      if (userData?.role === 1) {
         return "Admin";
-      } else if (userData?.role === "2") {
+      } else if (userData?.role === 2) {
         return "Superintendent";
       } else {
         return "Sales Associate";
