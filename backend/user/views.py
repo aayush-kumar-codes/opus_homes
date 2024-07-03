@@ -38,3 +38,23 @@ class Login(APIView):
             return Response({'message': 'Login successful', 'token': token}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response("wrong password", status=status.HTTP_400_BAD_REQUEST)
+        
+
+class UserDetailsView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        serializer = RegisterSerializer(user)
+        response = serializer.data
+        response.pop('password')
+        return Response(response, status=status.HTTP_200_OK)
+    
+    def patch(self, request):
+        user = request.user
+        serializer = RegisterSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            response= serializer.data
+            response.pop('password', 'last_login')
+            return Response(response, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
