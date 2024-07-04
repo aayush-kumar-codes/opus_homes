@@ -102,7 +102,7 @@ const Register = () => {
                 {e.label}
               </Typography>
               <TextField
-                required
+                // required
                 type={e.type}
                 key={i}
                 placeholder={`Enter ${e.label}`}
@@ -111,8 +111,8 @@ const Register = () => {
                 sx={{ width: "100%" }}
                 value={formik.values[e.id]}
                 onChange={formik.handleChange}
-                // error={formik.touched[e.id] && Boolean(formik.errors[e.id])}
-                // helperText={formik.touched[e.id] && formik.errors[e.id]}
+                error={formik.touched[e.id] && Boolean(formik.errors[e.id])}
+                helperText={formik.touched[e.id] && formik.errors[e.id]}
               />
             </Stack>
           ))}
@@ -122,13 +122,15 @@ const Register = () => {
               Role
             </Typography>
             <Select
-              required
+              // required
               id="role"
               name="role"
               onChange={formik.handleChange}
               value={formik.values.role}
               sx={{ width: "100%" }}
               displayEmpty
+              error={formik.touched.role && Boolean(formik.errors.role)}
+              helperText={formik.touched.role && formik.errors.role}
             >
               <MenuItem value="" disabled>
                 --Select--

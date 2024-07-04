@@ -1,11 +1,14 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../axios";
 
 const ProfileDetails = () => {
   const [userData, setUserData] = useState({});
+  const [loader, setLoader] = React.useState(false);
+
   useEffect(() => {
     const data = async () => {
+      setLoader(true);
       try {
         const response = await axiosInstance.get("/user/profile/", {
           headers: {
@@ -19,6 +22,7 @@ const ProfileDetails = () => {
       } catch (error) {
         console.log(error);
       }
+      setLoader(false);
     };
     data();
   }, []);
@@ -58,36 +62,64 @@ const ProfileDetails = () => {
           >
             My Profile
           </Typography>
-          <Stack gap={1} sx={{ display: "flex", justifyContent: "space-between", flexDirection:{xs:"column",lg:"row"} }}>
-            <Stack gap={1}>
-              <Typography
-                variant="body1"
-                sx={{ fontWeight: 600, fontSize: "20px" }}
-              >
-                First Name: {userData?.first_name}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ fontWeight: 600, fontSize: "20px" }}
-              >
-                Last Name: {userData?.last_name}
-              </Typography>
+          {loader ? (
+            <Box textAlign={"center"}>
+              {" "}
+              <CircularProgress size={"1.5rem"} color="inherit" />
+            </Box>
+          ) : (
+            <Stack
+              sx={{
+                display: "flex",
+                gap: { xs: 1, lg: 0 },
+                justifyContent: { xs: "center", lg: "space-between" },
+                flexDirection: { xs: "column", lg: "row" },
+              }}
+            >
+              <Stack sx={{ minWidth: 200 }} spacing={1}>
+                {" "}
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, fontSize: "19px" }}
+                >
+                  First Name:
+                </Typography>
+                <Typography variant="body1" sx={{ fontSize: "18px" }}>
+                  {userData?.first_name}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, fontSize: "19px" }}
+                >
+                  Last Name:
+                </Typography>
+                <Typography variant="body1" sx={{ fontSize: "18px" }}>
+                  {userData?.last_name}
+                </Typography>
+              </Stack>
+              <Stack sx={{ minWidth: 200 }} spacing={1}>
+                {" "}
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, fontSize: "19px" }}
+                >
+                  Email:
+                </Typography>
+                <Typography variant="body1" sx={{ fontSize: "18px" }}>
+                  {userData?.email}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, fontSize: "19px" }}
+                >
+                  Role:
+                </Typography>
+                <Typography variant="body1" sx={{ fontSize: "18px" }}>
+                  {roleData()}
+                </Typography>
+              </Stack>
             </Stack>
-            <Stack gap={1}>
-              <Typography
-                variant="body1"
-                sx={{ fontWeight: 600, fontSize: "20px" }}
-              >
-                Email : {userData?.email}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ fontWeight: 600, fontSize: "20px" }}
-              >
-                Role : {roleData()}
-              </Typography>
-            </Stack>
-          </Stack>
+          )}
         </Stack>
       </Box>
     </Stack>

@@ -1,9 +1,14 @@
 import * as yup from "yup";
 
 export const loginValidateSchema = yup.object({
-  email: yup.string().email("Email must valid").required("Email is Required"),
+  email: yup
+    .string()
+    .trim()
+    .email("Email must valid")
+    .required("Email is Required"),
   password: yup
     .string()
+    .trim()
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
 });
@@ -11,32 +16,43 @@ export const loginValidateSchema = yup.object({
 export const registerValidateSchema = yup.object({
   first_name: yup
     .string()
+    .trim()
     .min(3, "FirstName must be atleast 3 characters")
     .required("FirstName is Required"),
   last_name: yup
     .string()
+    .trim()
     .min(3, "LastName must be atleast 3 characters")
-    .optional("LastName is Required"),
-  email: yup.string().email("Email must valid").required("Email is Required"),
+    .required("LastName is Required"),
+  email: yup
+    .string()
+    .trim()
+    .email("Email must valid")
+    .required("Email is Required"),
   password: yup
     .string()
+    .trim()
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
   confirm_password: yup
     .string()
+    .trim()
     .oneOf([yup.ref("password")], "Password doesn't match")
     .required("Confirm Password is required"),
+  role: yup.string().required("Role is Required"),
 });
 
 export const updateValidateSchema = yup.object({
   first_name: yup
     .string()
+    .trim()
     .min(3, "FirstName must be atleast 3 characters")
     .required("FirstName is Required"),
   last_name: yup
     .string()
+    .trim()
     .min(3, "LastName must be atleast 3 characters")
-    .optional("LastName is Required"),
+    .required("LastName is Required"),
 });
 
 export const roleValidationSchema = yup.object({

@@ -36,7 +36,7 @@ const Login = () => {
             position: "top-right",
             autoClose: 5000,
           });
-          console.log(response.data)
+          console.log(response.data);
           localStorage.setItem("token", response.data.token);
           formik.resetForm();
           navigate("/dashboard");
@@ -51,10 +51,17 @@ const Login = () => {
       } catch (error) {
         console.error("Error:", error);
         setLoader(false);
-        toast.error(error.response.data.detail, {
-          position: "top-right",
-          autoClose: 5000,
-        });
+        if (error.response.status === 404) {
+          toast.error(error.response.data.detail, {
+            position: "top-right",
+            autoClose: 5000,
+          });
+        } else {
+          toast.error(error.response.data, {
+            position: "top-right",
+            autoClose: 5000,
+          });
+        }
       }
     },
   });
@@ -102,7 +109,7 @@ const Login = () => {
                 {e.label}
               </Typography>
               <TextField
-                required
+                // required
                 type={e.type}
                 id={e.id}
                 placeholder={`Enter ${e.label}`}
@@ -110,8 +117,8 @@ const Login = () => {
                 sx={{ width: "100%" }}
                 value={formik.values[e.id]}
                 onChange={formik.handleChange}
-                // error={formik.touched[e.id] && Boolean(formik.errors[e.id])}
-                // helperText={formik.touched[e.id] && formik.errors[e.id]}
+                error={formik.touched[e.id] && Boolean(formik.errors[e.id])}
+                helperText={formik.touched[e.id] && formik.errors[e.id]}
               />
             </Stack>
           ))}

@@ -340,7 +340,6 @@ const CRMForm = () => {
         justifyContent: "center",
         alignItems: "center",
         padding: "20px",
-        
       }}
     >
       <ToastContainer />
@@ -350,7 +349,7 @@ const CRMForm = () => {
           maxWidth: "800px",
           p: 3,
           borderRadius: 2,
-          backgroundImage:"linear-gradient(to right, lightgrey,#E9E9E9)",
+          backgroundImage: "linear-gradient(to right, lightgrey,#E9E9E9)",
           backdropFilter: "blur(15px)",
         }}
         spacing={3}
@@ -379,6 +378,7 @@ const CRMForm = () => {
               <FormControl>
                 <InputLabel id="home_interested_in">Home Type</InputLabel>
                 <Select
+                  required
                   fullWidth
                   id="home_interested_in"
                   name="home_interested_in"
@@ -398,6 +398,7 @@ const CRMForm = () => {
               <FormControl>
                 <InputLabel id="Size_of_home">Home Size</InputLabel>
                 <Select
+                  required
                   fullWidth
                   id="Size_of_home"
                   name="Size_of_home"
@@ -418,6 +419,7 @@ const CRMForm = () => {
               <FormControl fullWidth>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
+                    required
                     id="date"
                     name="date"
                     value={
@@ -446,6 +448,7 @@ const CRMForm = () => {
               <FormControl>
                 <InputLabel id="financing_option">Financing</InputLabel>
                 <Select
+                  required
                   fullWidth
                   id="financing_option"
                   name="financing_option"
@@ -465,6 +468,7 @@ const CRMForm = () => {
               <FormControl>
                 <InputLabel id="hero">Hero Choices</InputLabel>
                 <Select
+                  required
                   fullWidth
                   id="hero"
                   name="hero"
@@ -489,7 +493,13 @@ const CRMForm = () => {
           </Stack>
           <Box my={3} textAlign="center">
             <ButtonComponent
-              text={loader ? <CircularProgress size={24} /> : "Submit"}
+              text={
+                loader ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Submit"
+                )
+              }
               type="submit"
             />
           </Box>

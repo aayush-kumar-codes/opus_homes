@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   CircularProgress,
@@ -19,7 +19,38 @@ import { UpdateDetails, updateValidateSchema } from "../../utiles/validation";
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
-  const [loader, setLoader] = React.useState(false);
+  const [loader, setLoader] = useState(false);
+  const [fetchedDataLoader, setFetchedDataLoader] = useState(false);
+  const [userData, setUserData] = useState({});
+
+  useEffect(() => {
+    const data = async () => {
+      setFetchedDataLoader(true);
+      try {
+        const response = await axiosInstance.get("/user/profile/", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (response.status) {
+          setUserData(response.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      setFetchedDataLoader(false);
+    };
+    data();
+  }, []);
+
+  useEffect(() => {
+    if (userData?.first_name && userData?.last_name) {
+      formik.setValues({
+        first_name: userData?.first_name,
+        last_name: userData?.last_name,
+      });
+    }
+  }, [userData]);
 
   const initialValues = {
     first_name: "",
@@ -30,7 +61,6 @@ const ProfileEdit = () => {
     initialValues: initialValues,
     validationSchema: updateValidateSchema,
     onSubmit: async (values) => {
-      console.log(values);
       setLoader(true);
       try {
         const response = await axiosInstance.patch("/user/profile/", values, {
@@ -50,11 +80,7 @@ const ProfileEdit = () => {
             autoClose: 5000,
           });
         }
-
-        console.log("Success:", response);
       } catch (error) {
-        console.error("Error:", error);
-        
         toast.error("Server Issue", {
           position: "top-right",
           autoClose: 5000,
@@ -77,8 +103,8 @@ const ProfileEdit = () => {
         sx={{ width: { xs: "80%", sm: "50%" } }}
         style={{
           borderRadius: "20px",
-          backgroundImage:"linear-gradient(to right, lightgrey,#E9E9E9)",
-        //   backgroundColor: "rgba(255, 255, 255, 0.50)",
+          backgroundImage: "linear-gradient(to right, lightgrey,#E9E9E9)",
+          //   backgroundColor: "rgba(255, 255, 255, 0.50)",
           backdropFilter: "blur(15px)",
           border: "2px solid rgba(255, 255, 255, 0.1)",
         }}
@@ -92,26 +118,36 @@ const ProfileEdit = () => {
           >
             Update Profile Details
           </Typography>
-          {UpdateDetails.map((e, i) => (
-            <Stack sx={{ width: "100%" }} key={i}>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                {e.label}
-              </Typography>
-              <TextField
-                required
-                type={e.type}
-                key={i}
-                placeholder={`Enter ${e.label}`}
-                id={e.id}
-                variant="outlined"
-                sx={{ width: "100%" }}
-                value={formik.values[e.id]}
-                onChange={formik.handleChange}
-                // error={formik.touched[e.id] && Boolean(formik.errors[e.id])}
-                // helperText={formik.touched[e.id] && formik.errors[e.id]}
-              />
-            </Stack>
-          ))}
+          {fetchedDataLoader ? (
+            <Box textAlign={"center"}>
+              {" "}
+              <CircularProgress size={"1.5rem"} color="inherit" />
+            </Box>
+          ) : (
+            <>
+              {" "}
+              {UpdateDetails.map((e, i) => (
+                <Stack sx={{ width: "100%" }} key={i}>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {e.label}
+                  </Typography>
+                  <TextField
+                    // required
+                    type={e.type}
+                    key={i}
+                    placeholder={`Enter ${e.label}`}
+                    id={e.id}
+                    variant="outlined"
+                    sx={{ width: "100%" }}
+                    value={formik.values[e.id]}
+                    onChange={formik.handleChange}
+                    error={formik.touched[e.id] && Boolean(formik.errors[e.id])}
+                    helperText={formik.touched[e.id] && formik.errors[e.id]}
+                  />
+                </Stack>
+              ))}
+            </>
+          )}
 
           {/* <Box sx={{ width: "100%" }}>
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -143,6 +179,7 @@ const ProfileEdit = () => {
                 "Update"
               )
             }
+            // disable={!formik.dirty}
           />
         </Stack>
       </Paper>

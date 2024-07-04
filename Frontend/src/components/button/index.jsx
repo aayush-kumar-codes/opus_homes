@@ -1,10 +1,11 @@
 import { Button } from '@mui/material'
 import React from 'react'
 
-const ButtonComponent = ({text, styles,onClick }) => {
+const ButtonComponent = ({text, styles,onClick,disable }) => {
   return (
     <Button
     onClick={onClick}
+    disabled={disable}
     type="submit"
       variant="contained"
       sx={{...styles,
