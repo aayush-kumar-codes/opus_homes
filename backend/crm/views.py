@@ -9,7 +9,9 @@ from .models import CRM
 from user.models import User
 
 class CustomerRelation(APIView):
+    
     permission_classes = [IsAuthenticated]
+    
     def post(self,request):
         user = request.user
         serializer = CRMSerializer(data=request.data)

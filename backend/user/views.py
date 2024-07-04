@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib.auth.hashers import make_password, check_password
+from django.shortcuts import get_object_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,14 +8,12 @@ from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from django.contrib.auth.hashers import make_password, check_password
-from django.shortcuts import get_object_or_404
-
 from .serializers import RegisterSerializer
 from .models import User
 
 
 class Register(APIView):
+    
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         confirm_password = request.data.get("confirm_password")
@@ -28,6 +27,7 @@ class Register(APIView):
     
 
 class Login(APIView):
+    
     def post(self, request):
         email = request.data.get("email")
         password = request.data.get("password")
@@ -41,7 +41,9 @@ class Login(APIView):
         
 
 class UserDetailsView(APIView):
+    
     permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         user = request.user
         serializer = RegisterSerializer(user)
