@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-4x*(hxygi%h=c6ltx3xki67-uiwwh3q&r-_^^#9odacy^p*7be
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["116.202.210.102"]
+ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -99,14 +99,6 @@ WSGI_APPLICATION = 'Opus_Homes.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-print(os.getenv('NAME'))
 
 DATABASES = {
     'default': {
