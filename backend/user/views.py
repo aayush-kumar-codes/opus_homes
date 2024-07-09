@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, JobFormSerializer
 from .models import User
 
 
@@ -35,7 +35,7 @@ class Login(APIView):
         if user and check_password(password, user.password):
             refresh = RefreshToken.for_user(user)
             token = str(refresh.access_token)
-            return Response({'message': 'Login successful', 'token': token}, status=status.HTTP_202_ACCEPTED)
+            return Response({'message': 'Login successful', 'token': token, 'user_role': user.role}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response("wrong password", status=status.HTTP_400_BAD_REQUEST)
         
@@ -60,3 +60,13 @@ class UserDetailsView(APIView):
             response.pop('password', 'last_login')
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class AdminForm(APIView):
+    permission_classes = [IsAdminUser]
+    def post(self, request):
+        serializer = JobFormSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
