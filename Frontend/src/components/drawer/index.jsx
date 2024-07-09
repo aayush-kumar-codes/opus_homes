@@ -147,7 +147,7 @@ export default function MiniDrawer({ pages }) {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <AppBar position="fixed" open={open}>
         <Toolbar
           sx={{
