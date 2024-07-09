@@ -60,10 +60,18 @@ const Register = () => {
       } catch (error) {
         console.error("Error:", error);
         setLoader(false);
-        toast.error("Server Issue", {
-          position: "top-right",
-          autoClose: 5000,
-        });
+        console.log(error?.response.status)
+        if (error?.response?.status === (404 || 400)) {
+          toast.error(error.response.data.detail, {
+            position: "top-right",
+            autoClose: 5000,
+          });
+        } else {
+          toast.error(error?.response?.data?.email?.[0] || error.message, {
+            position: "top-right",
+            autoClose: 5000,
+          });
+        }
       }
     },
   });
@@ -149,6 +157,7 @@ const Register = () => {
                 "Register"
               )
             }
+            styles={{bgcolor: "#417BF9"}}
           />
 
           <Typography variant="body2" align="center">

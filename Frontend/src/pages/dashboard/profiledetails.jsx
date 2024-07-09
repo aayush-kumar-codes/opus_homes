@@ -1,6 +1,7 @@
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../axios";
+import Cookies from "js-cookie";
 
 const ProfileDetails = () => {
   const [userData, setUserData] = useState({});
@@ -12,7 +13,7 @@ const ProfileDetails = () => {
       try {
         const response = await axiosInstance.get("/user/profile/", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
         if (response.status) {

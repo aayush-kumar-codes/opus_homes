@@ -22,15 +22,19 @@ import PropTypes from "prop-types";
 import {
   Analytics,
   AutoGraph,
+  BusinessCenter,
   FactCheck,
   ListAlt,
   Logout,
+  NoteAdd,
   Person,
 } from "@mui/icons-material";
 import GraphicEqIcon from "@mui/icons-material/GraphicEq";
 import { Popover, Stack, Tooltip } from "@mui/material";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const drawerWidth = 240;
 
@@ -104,6 +108,13 @@ export default function MiniDrawer({ pages }) {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const location = useLocation();
+
+  React.useEffect(() => {
+    // console.log(Cookies.get("token"));
+    // const decoded = jwtDecode(Cookies.get("token"));
+    // console.log(decoded,"decode")
+  }, []);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -125,7 +136,7 @@ export default function MiniDrawer({ pages }) {
 
   const handleLogout = () => {
     navigate("../", { replace: "true" });
-    localStorage.clear();
+    Cookies.remove("token");
   };
 
   const handleProfile = () => {
@@ -252,20 +263,15 @@ export default function MiniDrawer({ pages }) {
                 icons: <ListAlt />,
               },
               {
+                name: "Project Management ",
+                path: "projectmanagement",
+                icons: <BusinessCenter />,
+              },
+              {
                 name: "Company financials ",
                 path: "companyfinance",
                 icons: <Analytics />,
               },
-              // {
-              //   name: "User login ",
-              //   // path: "data-matrix-summary",
-              //   icons: <AutoGraph />,
-              // },
-              // {
-              //   name: "Project traction",
-              //   // path: "datamatrixsummarytable-back",
-              //   icons: <GraphicEqIcon />,
-              // },
               {
                 name: "Project progression",
                 path: "projectprogression",
@@ -276,13 +282,25 @@ export default function MiniDrawer({ pages }) {
                 path: "projectupdate",
                 icons: <AutoGraph />,
               },
+              {
+                name: "New Job Entry",
+                path: "newjobentry",
+                icons: <NoteAdd />,
+              },
             ].map((text, index) => (
               <NavLink
                 to={text.path}
                 style={{ color: "inherit", textDecoration: "none" }}
                 key={index}
               >
-                <Tooltip title={text.name} placement="right-start">
+                <Tooltip
+                  title={
+                    text.name === "New Job Entry"
+                      ? "New Job Entry (Only Admins Have Access To Submit)"
+                      : text.name
+                  }
+                  placement="right-start"
+                >
                   <ListItem
                     disablePadding
                     sx={{
@@ -290,7 +308,8 @@ export default function MiniDrawer({ pages }) {
                       borderBottom:
                         location.pathname === "/dashboard/" + text.path &&
                         "3px solid transparent",
-                      borderImage: "linear-gradient(to left, pink,lightblue)",
+                      borderImage:
+                        "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
                       borderImageSlice: 1,
                       ":hover": {
                         borderImageSlice: 1,
@@ -340,7 +359,7 @@ export default function MiniDrawer({ pages }) {
                 name: "Logout",
                 icon: <LogoutIcon />,
                 onclick: () => {
-                  localStorage.clear();
+                  Cookies.remove("token");
                   navigate("/", { replace: true });
                 },
               },
@@ -359,7 +378,8 @@ export default function MiniDrawer({ pages }) {
                       borderBottom:
                         location.pathname === "/dashboard/" + text.path &&
                         "3px solid transparent",
-                      borderImage: "linear-gradient(to left, pink,lightblue)",
+                      borderImage:
+                        "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
                       borderImageSlice: 1,
                       ":hover": {
                         borderImageSlice: 1,

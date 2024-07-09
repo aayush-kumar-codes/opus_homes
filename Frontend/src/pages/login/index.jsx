@@ -14,6 +14,7 @@ import ButtonComponent from "../../components/button";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { axiosInstance } from "../../axios";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const Login = () => {
             autoClose: 5000,
           });
           console.log(response.data);
-          localStorage.setItem("token", response.data.token);
+          Cookies.set("token", response.data.token);
           formik.resetForm();
           navigate("/dashboard");
         } else {
@@ -51,13 +52,13 @@ const Login = () => {
       } catch (error) {
         console.error("Error:", error);
         setLoader(false);
-        if (error.response.status === 404) {
+        if (error?.response?.status === (404 || 400)) {
           toast.error(error.response.data.detail, {
             position: "top-right",
             autoClose: 5000,
           });
         } else {
-          toast.error(error.response.data, {
+          toast.error(error.message, {
             position: "top-right",
             autoClose: 5000,
           });
@@ -66,7 +67,7 @@ const Login = () => {
     },
   });
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     if (token) {
       navigate("/dashboard");
     }
@@ -137,6 +138,7 @@ const Login = () => {
                 "Login"
               )
             }
+            styles={{bgcolor: "#417BF9"}}
           />
 
           <Typography variant="body2" align="center">

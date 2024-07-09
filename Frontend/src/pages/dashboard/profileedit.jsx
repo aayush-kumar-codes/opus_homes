@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ButtonComponent from "../../components/button";
 import { axiosInstance } from "../../axios";
 import { UpdateDetails, updateValidateSchema } from "../../utiles/validation";
+import Cookies from "js-cookie";
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const ProfileEdit = () => {
       try {
         const response = await axiosInstance.get("/user/profile/", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
         if (response.status) {
@@ -65,7 +66,7 @@ const ProfileEdit = () => {
       try {
         const response = await axiosInstance.patch("/user/profile/", values, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("token")}`,
           },
         });
         if (response.status) {
@@ -73,7 +74,7 @@ const ProfileEdit = () => {
             position: "top-right",
             autoClose: 5000,
           });
-          formik.resetForm();
+          // formik.resetForm();
         } else {
           toast.error(response.message, {
             position: "top-right",
@@ -179,6 +180,7 @@ const ProfileEdit = () => {
                 "Update"
               )
             }
+            styles={{bgcolor: "#417BF9"}}
             // disable={!formik.dirty}
           />
         </Stack>
