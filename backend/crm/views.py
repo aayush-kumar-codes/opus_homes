@@ -10,6 +10,7 @@ from .serializers import CRMSerializer
 from .models import CRM
 from user.models import User
 
+
 class CustomerRelation(APIView):
     
     permission_classes = [IsAuthenticated]
@@ -49,8 +50,7 @@ class ManageCrmRecords(APIView):
             serializer.save()
             return Response({"message":"The details are updated."}, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-        
+     
 
 
 
