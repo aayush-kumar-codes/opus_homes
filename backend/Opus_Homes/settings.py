@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'crm',
+    'AdminForm',
     'django_restframework',
     'rest_framework_simplejwt',
     'corsheaders',
