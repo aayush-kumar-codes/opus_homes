@@ -48,6 +48,7 @@ const Login = () => {
           });
           console.log(response.data);
           Cookies.set("token", response.data.token);
+          Cookies.set("user_role", response.data.user_role);
           formik.resetForm();
           navigate("/dashboard");
         } else {
@@ -67,7 +68,7 @@ const Login = () => {
             autoClose: 5000,
           });
         } else {
-          toast.error(error.message, {
+          toast.error(error.response.data, {
             position: "top-right",
             autoClose: 5000,
           });

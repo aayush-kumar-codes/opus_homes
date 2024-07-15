@@ -266,7 +266,12 @@ const paidData = [
   { value: "1", label: "Yes" },
 ];
 
-export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
+export const CustTable = ({
+  editedUsers,
+  setEditedUsers,
+  fetchedData,
+  setJobPageResponse,
+}) => {
   const handleSaveUsers = async (original, values) => {
     console.log(values, "gotcha");
 
@@ -277,13 +282,13 @@ export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
       cost: values.cost || original.cost,
       paid: values.paid || original.paid,
       payment_type: values.payment_type || original.payment_type,
-      Sub_Contractor:
-        values.Sub_Contractor !== null && values.Sub_Contractor !== undefined
-          ? values.Sub_Contractor
-          : original.Sub_Contractor !== null &&
-            original.Sub_Contractor !== undefined
-          ? original.Sub_Contractor
-          : null,
+      Sub_Contractor:values.Sub_Contractor || original.Sub_Contractor,
+        // values.Sub_Contractor !== null && values.Sub_Contractor !== undefined
+        //   ? values.Sub_Contractor
+        //   : original.Sub_Contractor !== null &&
+        //     original.Sub_Contractor !== undefined
+        //   ? original.Sub_Contractor
+        //   : null,
     };
 
     console.log("ljihugy", data);
@@ -297,10 +302,11 @@ export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
           },
         }
       );
-      // if (response.status) {
-      //   console.log(response.data, "entries");
-      //   //setFetchedData(response.data);
-      // }
+      if (response.status) {
+        console.log(response.data, "entries");
+        //setFetchedData(response.data);
+        setJobPageResponse(response.data.job_record)
+      }
     } catch (error) {
       console.log(error);
     }
@@ -345,11 +351,16 @@ export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
           select: true,
           // error: !!validationErrors?.state,
           // helperText: validationErrors?.state,
-          onChange: (event) =>
+          onChange: (event) => {
+            handleSaveUsers(row.original, {
+              ...row._valuesCache,
+              status: event.target.value,
+            });
             setEditedUsers({
               ...editedUsers,
-              [row.id]: { ...row.original, state: event.target.value },
-            }),
+              [row.id]: { ...row.original, status: event.target.value },
+            });
+          },
         }),
       },
       {
@@ -369,6 +380,10 @@ export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
             //   ...validationErrors,
             //   [cell.id]: validationError,
             // });
+            handleSaveUsers(row.original, {
+              ...row._valuesCache,
+              cost: event.target.value,
+            });
             setEditedUsers({ ...editedUsers, [row.id]: row.original });
           },
         }),
@@ -382,11 +397,16 @@ export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
           select: true,
           // error: !!validationErrors?.state,
           // helperText: validationErrors?.state,
-          onChange: (event) =>
+          onChange: (event) => {
+            handleSaveUsers(row.original, {
+              ...row._valuesCache,
+              paid: event.target.value,
+            });
             setEditedUsers({
               ...editedUsers,
-              [row.id]: { ...row.original, state: event.target.value },
-            }),
+              [row.id]: { ...row.original, paid: event.target.value },
+            });
+          },
         }),
       },
       {
@@ -398,11 +418,16 @@ export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
           select: true,
           // error: !!validationErrors?.state,
           // helperText: validationErrors?.state,
-          onChange: (event) =>
+          onChange: (event) => {
+            handleSaveUsers(row.original, {
+              ...row._valuesCache,
+              payment_type: event.target.value,
+            });
             setEditedUsers({
               ...editedUsers,
-              [row.id]: { ...row.original, state: event.target.value },
-            }),
+              [row.id]: { ...row.original, payment_type: event.target.value },
+            });
+          },
         }),
       },
       {
@@ -422,23 +447,27 @@ export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
             //   ...validationErrors,
             //   [cell.id]: validationError,
             // });
+            handleSaveUsers(row.original, {
+              ...row._valuesCache,
+              Sub_Contractor: event.target.value,
+            });
             setEditedUsers({ ...editedUsers, [row.id]: row.original });
           },
-          onKeyDown: (event) => {
-            if (event.key === "Enter") {
-              event.preventDefault(); // Prevent default form submission
-              event.stopPropagation();
-              console.log(
-                table,
-                "newtableeeeee",
-                row,
-                "rowwwwwwwwww",
-                
-              );
-              handleSaveUsers(row.original, row._valuesCache);
-              // handleCreateUser(row._valuesCache, table); // Call your save function here
-            }
-          },
+          // onKeyDown: (event) => {
+          //   if (event.key === "Enter") {
+          //     event.preventDefault(); // Prevent default form submission
+          //     event.stopPropagation();
+          //     // console.log(
+          //     //   table,
+          //     //   "newtableeeeee",
+          //     //   row,
+          //     //   "rowwwwwwwwww",
+
+          //     // );
+          //     handleSaveUsers(row.original, row._valuesCache);
+          //     // handleCreateUser(row._valuesCache, table); // Call your save function here
+          //   }
+          // },
         }),
       },
     ],
@@ -477,7 +506,7 @@ export const CustTable = ({ editedUsers, setEditedUsers, fetchedData }) => {
       sx: {
         border: "1px solid rgba(81, 81, 81, .5)",
         fontWeight: "bold",
-        bgcolor: "lightgrey",
+       bgcolor:"#9EBCD8",
         py: "5px",
         // px :'5px',
       },
