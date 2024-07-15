@@ -24,6 +24,7 @@ import {
   AutoGraph,
   Book,
   BusinessCenter,
+  Edit,
   FactCheck,
   ListAlt,
   Logout,
@@ -110,12 +111,6 @@ export default function MiniDrawer({ pages }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const location = useLocation();
 
-  React.useEffect(() => {
-    // console.log(Cookies.get("token"));
-    // const decoded = jwtDecode(Cookies.get("token"));
-    // console.log(decoded,"decode")
-  }, []);
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -138,10 +133,17 @@ export default function MiniDrawer({ pages }) {
   const handleLogout = () => {
     navigate("../", { replace: "true" });
     Cookies.remove("token");
+    Cookies.remove("job_id");
+    Cookies.remove("user_role");
   };
 
   const handleProfile = () => {
     navigate("/dashboard/profile");
+    handleClose();
+  };
+
+  const handleProfileUpdate = () => {
+    navigate("/dashboard/editprofile");
     handleClose();
   };
 
@@ -152,8 +154,7 @@ export default function MiniDrawer({ pages }) {
       <AppBar position="fixed" open={open}>
         <Toolbar
           sx={{
-            backgroundImage:
-              "linear-gradient(to right,#fff,#9EBCD8)",
+            backgroundImage: "linear-gradient(to right,#fff,#9EBCD8)",
             // backgroundImage:
             //   "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
             display: "flex",
@@ -178,8 +179,8 @@ export default function MiniDrawer({ pages }) {
               sx={{
                 fontWeight: 600,
                 cursor: "pointer",
-                display:"flex",
-                alignItems:"center"
+                display: "flex",
+                alignItems: "center",
               }}
               // variant="h6"
               // noWrap
@@ -236,7 +237,7 @@ export default function MiniDrawer({ pages }) {
                       sx={{
                         display: "block",
                         borderBottom:
-                          (location.pathname === "/dashboard/" + text.path) &&
+                          location.pathname === "/dashboard/" + text.path &&
                           "2px solid #000",
                         // borderImage:
                         //   "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
@@ -280,59 +281,61 @@ export default function MiniDrawer({ pages }) {
             </Box>
           </Box>
           <Stack display={"flex"} flexDirection={"row"} gap={1}>
-            <List>
-              {[
-                {
-                  name: "New Job Entry",
-                  path: "newjobentry",
-                },
-              ].map((text, index) => (
-                <NavLink
-                  to={text.path}
-                  style={{ color: "#000", textDecoration: "none" }}
-                  key={index}
-                >
-                  <ListItem
-                    disablePadding
-                    sx={{
-                      display: "block",
-                      borderBottom:
-                        location.pathname === "/dashboard/" + text.path &&
-                        "2px solid #000",
-                      // borderImage:
-                      //   "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
-                      borderImageSlice: 1,
-                      ":hover": {
-                        borderImageSlice: 1,
-                        borderBottom: "2px solid #000",
-                      },
-                      // bgcolor:
-                      //   location.pathname === "/dashboard/" + text.path &&
-                      //   "#F5F5F5",
-                    }}
+            {Cookies.get("user_role") === "1" && (
+              <List>
+                {[
+                  {
+                    name: "New Job Entry",
+                    path: "newjobentry",
+                  },
+                ].map((text, index) => (
+                  <NavLink
+                    to={text.path}
+                    style={{ color: "#000", textDecoration: "none" }}
+                    key={index}
                   >
-                    <ListItemButton
+                    <ListItem
+                      disablePadding
                       sx={{
-                        minHeight: 48,
-                        justifyContent: open ? "initial" : "center",
-                        px: 2.5,
+                        display: "block",
+                        borderBottom:
+                          location.pathname === "/dashboard/" + text.path &&
+                          "2px solid #000",
+                        // borderImage:
+                        //   "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
+                        borderImageSlice: 1,
+                        ":hover": {
+                          borderImageSlice: 1,
+                          borderBottom: "2px solid #000",
+                        },
+                        // bgcolor:
+                        //   location.pathname === "/dashboard/" + text.path &&
+                        //   "#F5F5F5",
                       }}
                     >
-                      <ListItemText
-                        primary={text.name}
-                        // sx={{ opacity: open ? 1 : 0 }}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                  {/* </Tooltip> */}
-                </NavLink>
-              ))}
-            </List>
+                      <ListItemButton
+                        sx={{
+                          minHeight: 48,
+                          justifyContent: open ? "initial" : "center",
+                          px: 2.5,
+                        }}
+                      >
+                        <ListItemText
+                          primary={text.name}
+                          // sx={{ opacity: open ? 1 : 0 }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                    {/* </Tooltip> */}
+                  </NavLink>
+                ))}
+              </List>
+            )}
             <Box display={"flex"} alignItems={"center"}>
               <Person
                 sx={{
                   cursor: "pointer",
-                  color:"#000"
+                  color: "#000",
                 }}
                 onClick={handleClick}
               />
@@ -352,7 +355,7 @@ export default function MiniDrawer({ pages }) {
                   p: 2,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
+                  // justifyContent: "space-between",
                   cursor: "pointer",
                   ":hover": {
                     bgcolor: "#EDEDED",
@@ -370,7 +373,25 @@ export default function MiniDrawer({ pages }) {
                   p: 2,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
+                  // justifyContent: "space-between",
+                  cursor: "pointer",
+                  ":hover": {
+                    bgcolor: "#EDEDED",
+                  },
+                }}
+                onClick={handleProfileUpdate}
+              >
+                <Edit />
+                <Typography variant="body1" sx={{ px: 2 }}>
+                  Profile Edit
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  // justifyContent: "space-between",
                   cursor: "pointer",
                   ":hover": {
                     bgcolor: "#EDEDED",
@@ -507,19 +528,24 @@ export default function MiniDrawer({ pages }) {
                 path: "joblist",
                 icon: <ListAlt />,
               },
-              {
-                name: "Profile Edit",
-                path: "editprofile",
-                icon: <Person2Icon />,
-              },
-              {
-                name: "Logout",
-                icon: <LogoutIcon />,
-                onclick: () => {
-                  Cookies.remove("token");
-                  navigate("/", { replace: true });
-                },
-              },
+
+              // {
+              //   name: "Profile Edit",
+              //   path: "editprofile",
+              //   icon: <Person2Icon />,
+              // },
+              // {
+              //   name: "Logout",
+              //   icon: <LogoutIcon />,
+              //   onclick: () => {
+              //     Cookies.remove("token");
+              //     Cookies.remove("job_id");
+              //     Cookies.remove("user_role");
+
+              //     navigate("/", { replace: true });
+              //   },
+              // },
+
             ].map((text, index) => (
               <NavLink
                 onClick={text.onclick}
