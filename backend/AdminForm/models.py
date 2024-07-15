@@ -70,6 +70,4 @@ class JobentryDetailsRecord(models.Model):
     completed_items_unpaid = models.IntegerField(default=0)
     payment_owed = models.IntegerField(default=0)
     Total_paid = models.IntegerField(default=0)
-    job_price = models.IntegerField(default=0)
-    payment_owed = models.IntegerField(default=0)
     job = models.OneToOneField(JobEntry, on_delete=models.CASCADE, related_name="records")

@@ -57,8 +57,9 @@ class GettingJobEntryDetails(APIView):
         job_id = job.id
         job_table = JobEntryDetails.objects.filter(job_id=job_id)
         serializer = GettingJobEntryDetailsSerializer(job_table, many=True)
+        job_record = record_updation(job_id)
         response = serializer.data
-        return Response(response, status=status.HTTP_200_OK)
+        return Response({"response": response, "job_record": job_record}, status=status.HTTP_200_OK)
     
     def patch(self, request, job_id, item_id):
         job = get_object_or_404(JobEntry, job_id=job_id)
