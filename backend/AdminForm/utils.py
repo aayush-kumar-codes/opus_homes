@@ -28,26 +28,40 @@ def Building_item_list(jobentry):
     JobentryDetailsRecord.objects.create(job=jobentry)
 
 def record_updation(job_id):
-    total_items = 64
+    
     total_paid = 0
-    job_price = 0
+    total_completed_items = 0
+    total_uncompleted_items = 0 
+    total_completed_items_paid = 0
+    total_completed_items_unpaid = 0
     job_record = get_object_or_404(JobentryDetailsRecord, job_id=job_id)
-    total_completed_items = JobEntryDetails.objects.filter(job_id=job_id, status = 1).count()
-    uncompleted_items = total_items - total_completed_items
-    total_completed_items_paid = JobEntryDetails.objects.filter(job_id=job_id, status = 1, paid=1).count()
-    total_completed_items_unpaid = JobEntryDetails.objects.filter(job_id=job_id, status = 1, paid=0).count()
+
+    completed_items_paid = JobEntryDetails.objects.filter(job_id=job_id, status = 1, paid=1)
+    for paid in completed_items_paid:
+        total_completed_items_paid = total_completed_items_paid + paid.cost
+
+    completed_items_unpaid = JobEntryDetails.objects.filter(job_id=job_id, status = 1, paid=0)
+    for unpaid in completed_items_unpaid:
+        total_completed_items_unpaid = total_completed_items_unpaid + unpaid.cost
+
     paids = JobEntryDetails.objects.filter(job_id=job_id, paid=1)
     for paid in paids:
         total_paid = total_paid + paid.cost
+    
+    uncompleted_items =  JobEntryDetails.objects.filter(job_id=job_id, status=0)
+    for uncompleted_item in uncompleted_items:
+        total_uncompleted_items = total_uncompleted_items + uncompleted_item.cost
+
     completed_items = JobEntryDetails.objects.filter(job_id=job_id, status=1)
     for completed_item in completed_items:
-        job_price =  completed_item.cost + job_price
-    payment_owed = job_price - total_paid
-    job_record.__dict__.update(
-    completed_items=total_completed_items,
-    uncompleted_items=uncompleted_items, completed_items_paid=total_completed_items_paid,
+        total_completed_items =  completed_item.cost + total_completed_items
+
+    payment_owed = total_completed_items - total_paid
+
+    job_record.__dict__.update(completed_items_paid=total_completed_items_paid,
     completed_items_unpaid=total_completed_items_unpaid, Total_paid=total_paid,
-    job_price=job_price, payment_owed=payment_owed)
+    completed_items=total_completed_items, uncompleted_items=total_uncompleted_items,
+    payment_owed=payment_owed)
          
     job_record.save()
     return model_to_dict(job_record)
