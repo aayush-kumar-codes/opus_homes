@@ -9,7 +9,7 @@ def Building_item_list(jobentry):
     items = [
         "Architect", "Engineer", "Boundary Survey", "Trusses design", "Energy Calculations",
         "Land Clearing", "Plot Plan", "Apply Permits", "Order Windows", "Permit Fees",
-        "Porta potty", "Utility Hook-Ups", "Premilinaries", "Pad stake", "Dirt",
+        "Porta potty", "Utility Hook-Ups", "Pad stake", "Dirt",
         "Porta potty", "Dumpster", "House stake", "Dig footers", "Form Board survey",
         "Underground Plumbing", "Underground Electrical", "Soil Treatment", "Foundation",
         "Block", "Trusses", "Lumber", "Framing Labor", "Windows & Sliders",
