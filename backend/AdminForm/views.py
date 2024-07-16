@@ -26,7 +26,8 @@ class AdminForm(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, job_id):
-        job = get_object_or_404(JobEntry, job_id=job_id)
+        user=request.user
+        job = get_object_or_404(JobEntry, job_id=job_id, user=user)
         job.delete()
         return Response({"message":"Job_id deleted"}, status=status.HTTP_200_OK)
 
@@ -71,6 +72,5 @@ class GettingJobEntryDetails(APIView):
             job_record = record_updation(job_id)
         response= serializer.data
         response["job_record"] = job_record
-        response["job_id"] = job.job_id
         return Response(response, status=status.HTTP_200_OK)
 
