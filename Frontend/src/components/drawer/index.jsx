@@ -255,7 +255,7 @@ export default function MiniDrawer({ pages }) {
                         sx={{
                           minHeight: 48,
                           justifyContent: open ? "initial" : "center",
-                          px: 2.5,
+                          px: 2,
                         }}
                       >
                         {/* <ListItemIcon
@@ -269,6 +269,11 @@ export default function MiniDrawer({ pages }) {
                       </ListItemIcon> */}
 
                         <ListItemText
+                          sx={{
+                            ".css-10hburv-MuiTypography-root": {
+                              fontSize: { md: "13px", lg: "16px" },
+                            },
+                          }}
                           primary={text.name}
                           // sx={{ opacity: open ? 1 : 0 }}
                         />
@@ -322,6 +327,11 @@ export default function MiniDrawer({ pages }) {
                       >
                         <ListItemText
                           primary={text.name}
+                          sx={{
+                            ".css-10hburv-MuiTypography-root": {
+                              fontSize: { md: "13px", lg: "16px" },
+                            },
+                          }}
                           // sx={{ opacity: open ? 1 : 0 }}
                         />
                       </ListItemButton>
@@ -545,7 +555,6 @@ export default function MiniDrawer({ pages }) {
               //     navigate("/", { replace: true });
               //   },
               // },
-
             ].map((text, index) => (
               <NavLink
                 onClick={text.onclick}
