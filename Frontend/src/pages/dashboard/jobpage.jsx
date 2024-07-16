@@ -37,12 +37,38 @@ const JobPage = () => {
   const [jobPageResponse, setJobPageResponse] = useState({});
   const [fetchedData, setFetchedData] = useState();
 
+  const subItems = ["Premilinaries", "Phase 1", "Phase 2", "Phase 3","Phase 4"];
+  const itemsToInsertAfter = ["Utility Hook-Ups", "Foundation","Dry-IN","Drywall","Flooring Labor"];
+
+
+  const addRowsAfterItems = (data) => {
+    let newData = [];
+    data.forEach((item, index) => {
+      newData.push(item);
+      if (itemsToInsertAfter.includes(item.items)) {
+        const additionalRows = [{
+          id: '', 
+          items:subItems[0], 
+          status: '',
+          cost: '',
+          paid: '',
+          payment_type: '',
+          Sub_Contractor: '',
+        }];
+        newData = newData.concat(additionalRows);
+        itemsToInsertAfter.splice(0, 1);
+        subItems.splice(0, 1)
+      }
+    });
+    return newData;
+  };
+
   useEffect(() => {
     const data = async () => {
       setFetchedDataLoader(true);
       try {
         const response = await axiosInstance.get(
-          `admin-form/${Cookies.get("job_id")}`,
+          `admin-form/${Cookies.get("job_id")}/`,
           {
             headers: {
               Authorization: `Bearer ${Cookies.get("token")}`,
@@ -76,7 +102,8 @@ const JobPage = () => {
         );
         if (response.status) {
           console.log(response.data, "entries");
-          setFetchedData(response.data.response);
+          const newData = addRowsAfterItems(response.data.response);
+          setFetchedData(newData);
           setJobPageResponse(response.data.job_record);
         }
       } catch (error) {
@@ -649,7 +676,7 @@ const JobPage = () => {
           No Data Found
         </Box>
       )}
-      {jobPageResponse?.job && (
+      {userData?.job_name && jobPageResponse?.job && (
         <Grid
           container
           spacing={2}
@@ -763,12 +790,13 @@ const JobPage = () => {
           </Box>
         ) : ( */}
         <>
-          {userData && fetchedData && (
+          {userData.job_name && fetchedData && (
             <CustTable
               fetchedData={fetchedData}
               editedUsers={editedUsers}
               setEditedUsers={setEditedUsers}
               setJobPageResponse={setJobPageResponse}
+              setFetchedData={setFetchedData}
             />
           )}
         </>

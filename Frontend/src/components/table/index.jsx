@@ -13,7 +13,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../axios";
 import Cookies from "js-cookie";
+import Delete from "@mui/icons-material/Delete";
+import { toast, ToastContainer } from "react-toastify";
 
+const adminHeaders = ["Job ID", "Job Name", "Action"];
 const headers = ["Job ID", "Job Name"];
 
 const CustomTable = () => {
@@ -45,20 +48,69 @@ const CustomTable = () => {
     Cookies.set("job_id", id);
     navigate(`/dashboard/jobpage/${id}`);
   };
+
+  const handleDelete = (id) => {
+    const data = async () => {
+      try {
+        const response = await axiosInstance.delete(`admin-form/${id}`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        if (response.status) {
+          const data = userData.filter((e) => e.job_id !== id);
+          setUserData(data);
+          console.log(response.data.message, "de");
+          toast.success(response.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      }
+    };
+    data();
+  };
+
+  const getHeaders = () => {
+    switch (Cookies.get("user_role")) {
+      case "1":
+        return adminHeaders;
+      default:
+        return headers;
+    }
+  };
+
   return (
     <>
+      <ToastContainer />
       {fetchedDataLoader ? (
         <Box textAlign={"center"}>
           {" "}
           <CircularProgress size={"1.5rem"} color="inherit" />
         </Box>
       ) : userData?.length > 0 ? (
-        <TableContainer component={Paper} sx={{ maxWidth: "50%" }}>
+        <TableContainer
+          component={Paper}
+          sx={{ maxWidth: { xs: "100%", md: "50%" } }}
+        >
           <Table>
             <TableHead>
               <TableRow>
-                {headers.map((header, index) => (
-                  <TableCell key={index} sx={{ fontWeight: "bold",textAlign:"center",bgcolor:"#9EBCD8" }}>
+                {getHeaders().map((header, index) => (
+                  <TableCell
+                    key={index}
+                    sx={{
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      bgcolor: "#9EBCD8",
+                    }}
+                  >
                     {header}
                   </TableCell>
                 ))}
@@ -71,12 +123,33 @@ const CustomTable = () => {
                   sx={{
                     cursor: "pointer",
                     backgroundColor: index % 2 === 0 ? "#f0f0f0" : "inherit",
-                    textAlign:"center"
+                    textAlign: "center",
                   }}
-                  onClick={() => handleClick(item.job_id)}
                 >
-                  <TableCell sx={{textAlign:"center"}}>{item.job_id}</TableCell>
-                  <TableCell sx={{textAlign:"center"}}>{item.job_name}</TableCell>
+                  <TableCell
+                    onClick={() => handleClick(item.job_id)}
+                    sx={{ textAlign: "center" }}
+                  >
+                    {item.job_id}
+                  </TableCell>
+                  <TableCell
+                    onClick={() => handleClick(item.job_id)}
+                    sx={{ textAlign: "center" }}
+                  >
+                    {item.job_name}
+                  </TableCell>
+                  {Cookies.get("user_role") === "1" && (
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                      }}
+                    >
+                      <Delete
+                        onClick={() => handleDelete(item.job_id)}
+                        sx={{ color: "red", ":hover": { color: "#000" } }}
+                      />
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

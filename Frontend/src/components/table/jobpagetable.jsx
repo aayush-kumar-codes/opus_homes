@@ -282,13 +282,13 @@ export const CustTable = ({
       cost: values.cost || original.cost,
       paid: values.paid || original.paid,
       payment_type: values.payment_type || original.payment_type,
-      Sub_Contractor:values.Sub_Contractor || original.Sub_Contractor,
-        // values.Sub_Contractor !== null && values.Sub_Contractor !== undefined
-        //   ? values.Sub_Contractor
-        //   : original.Sub_Contractor !== null &&
-        //     original.Sub_Contractor !== undefined
-        //   ? original.Sub_Contractor
-        //   : null,
+      Sub_Contractor: values.Sub_Contractor || original.Sub_Contractor,
+      // values.Sub_Contractor !== null && values.Sub_Contractor !== undefined
+      //   ? values.Sub_Contractor
+      //   : original.Sub_Contractor !== null &&
+      //     original.Sub_Contractor !== undefined
+      //   ? original.Sub_Contractor
+      //   : null,
     };
 
     console.log("ljihugy", data);
@@ -304,8 +304,7 @@ export const CustTable = ({
       );
       if (response.status) {
         console.log(response.data, "entries");
-        //setFetchedData(response.data);
-        setJobPageResponse(response.data.job_record)
+        setJobPageResponse(response.data.job_record);
       }
     } catch (error) {
       console.log(error);
@@ -319,11 +318,26 @@ export const CustTable = ({
         header: "Item unique Number",
         enableEditing: false,
         size: 80,
+        muiTableBodyCellProps: ({ row }) => ({
+          sx: {
+            border: "1px solid rgba(81, 81, 81, .5)",
+            py: "2px",
+            bgcolor: row.original.id === "" ? "#cceeff" : "inherit",
+          },
+        }),
       },
       {
         accessorKey: "items",
         header: "Items",
         enableEditing: false,
+        muiTableBodyCellProps: ({ row }) => ({
+          sx: {
+            border: "1px solid rgba(81, 81, 81, .5)",
+            py: "2px",
+            bgcolor: row.original.id === "" ? "#cceeff" : "inherit",
+            fontWeight:row.original.id !== "" ?"none":600
+          },
+        }),
         muiEditTextFieldProps: ({ cell, row }) => ({
           type: "text",
           required: true,
@@ -347,10 +361,18 @@ export const CustTable = ({
         header: "Status",
         editVariant: "select",
         editSelectOptions: statusData,
+        muiTableBodyCellProps: ({ row }) => ({
+          sx: {
+            border: "1px solid rgba(81, 81, 81, .5)",
+            py: "2px",
+            bgcolor: row.original.id === "" ? "#cceeff" : "inherit",
+          },
+        }),
         muiEditTextFieldProps: ({ row }) => ({
-          select: true,
+          select: row.original.id !== "",
           // error: !!validationErrors?.state,
           // helperText: validationErrors?.state,
+          disabled: row.original.id === "",
           onChange: (event) => {
             handleSaveUsers(row.original, {
               ...row._valuesCache,
@@ -366,12 +388,20 @@ export const CustTable = ({
       {
         accessorKey: "cost",
         header: "Cost ($)",
+        muiTableBodyCellProps: ({ row }) => ({
+          sx: {
+            border: "1px solid rgba(81, 81, 81, .5)",
+            py: "2px",
+            bgcolor: row.original.id === "" ? "#cceeff" : "inherit",
+          },
+        }),
         muiEditTextFieldProps: ({ cell, row }) => ({
           type: "number",
           required: true,
           // error: !!validationErrors?.[cell.id],
           // helperText: validationErrors?.[cell.id],
           //store edited user in state to be saved later
+          disabled: row.original.id === "",
           onBlur: (event) => {
             // const validationError = !validateRequired(event.currentTarget.value)
             //   ? "Incorrect Value"
@@ -393,10 +423,18 @@ export const CustTable = ({
         header: "Paid",
         editVariant: "select",
         editSelectOptions: paidData,
+        muiTableBodyCellProps: ({ row }) => ({
+          sx: {
+            border: "1px solid rgba(81, 81, 81, .5)",
+            py: "2px",
+            bgcolor: row.original.id === "" ? "#cceeff" : "inherit",
+          },
+        }),
         muiEditTextFieldProps: ({ row }) => ({
-          select: true,
+          select: row.original.id !== "",
           // error: !!validationErrors?.state,
           // helperText: validationErrors?.state,
+          disabled: row.original.id === "",
           onChange: (event) => {
             handleSaveUsers(row.original, {
               ...row._valuesCache,
@@ -414,10 +452,18 @@ export const CustTable = ({
         header: "Payment Type",
         editVariant: "select",
         editSelectOptions: paymentData,
+        muiTableBodyCellProps: ({ row }) => ({
+          sx: {
+            border: "1px solid rgba(81, 81, 81, .5)",
+            py: "2px",
+            bgcolor: row.original.id === "" ? "#cceeff" : "inherit",
+          },
+        }),
         muiEditTextFieldProps: ({ row }) => ({
-          select: true,
+          select: row.original.id !== "",
           // error: !!validationErrors?.state,
           // helperText: validationErrors?.state,
+          disabled: row.original.id === "",
           onChange: (event) => {
             handleSaveUsers(row.original, {
               ...row._valuesCache,
@@ -433,12 +479,20 @@ export const CustTable = ({
       {
         accessorKey: "Sub_Contractor",
         header: "Sub Contractor",
+        muiTableBodyCellProps: ({ row }) => ({
+          sx: {
+            border: "1px solid rgba(81, 81, 81, .5)",
+            py: "2px",
+            bgcolor: row.original.id === "" ? "#cceeff" : "inherit",
+          },
+        }),
         muiEditTextFieldProps: ({ cell, row }) => ({
           type: "text",
           required: true,
           // error: !!validationErrors?.[cell.id],
           // helperText: validationErrors?.[cell.id],
           //store edited user in state to be saved later
+          disabled: row.original.id === "",
           onBlur: (event) => {
             // const validationError = !validateRequired(event.currentTarget.value)
             //   ? "Invalid format"
@@ -481,8 +535,8 @@ export const CustTable = ({
     enableColumnFilters: false,
     enablePagination: false,
     enableSorting: false,
-    createDisplayMode: "row", // ('modal', and 'custom' are also available)
-    editDisplayMode: "table", // ('modal', 'row', 'cell', and 'custom' are also
+    createDisplayMode: "row",
+    editDisplayMode: "table",
     enableEditing: true,
     enableRowActions: false,
     positionActionsColumn: "last",
@@ -506,7 +560,7 @@ export const CustTable = ({
       sx: {
         border: "1px solid rgba(81, 81, 81, .5)",
         fontWeight: "bold",
-       bgcolor:"#9EBCD8",
+        bgcolor: "#9EBCD8",
         py: "5px",
         // px :'5px',
       },
