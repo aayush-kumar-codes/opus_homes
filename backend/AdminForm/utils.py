@@ -29,7 +29,7 @@ def Building_item_list(jobentry):
 
 def record_updation(job_id):
     
-    total_paid = 0
+    total_cost = 0
     total_completed_items = 0
     total_uncompleted_items = 0 
     total_completed_items_paid = 0
@@ -44,9 +44,9 @@ def record_updation(job_id):
     for unpaid in completed_items_unpaid:
         total_completed_items_unpaid = total_completed_items_unpaid + unpaid.cost
 
-    paids = JobEntryDetails.objects.filter(job_id=job_id, paid=1)
-    for paid in paids:
-        total_paid = total_paid + paid.cost
+    costs = JobEntryDetails.objects.filter(job_id=job_id)
+    for cost in costs:
+        total_cost = total_cost + cost.cost
     
     uncompleted_items =  JobEntryDetails.objects.filter(job_id=job_id, status=0)
     for uncompleted_item in uncompleted_items:
@@ -56,10 +56,11 @@ def record_updation(job_id):
     for completed_item in completed_items:
         total_completed_items =  completed_item.cost + total_completed_items
 
-    payment_owed = total_completed_items - total_paid
+    job_entry = JobEntry.objects.get(id=job_id)
+    payment_owed = job_entry.contract_price - job_record.contract_amount_paid
 
     job_record.__dict__.update(completed_items_paid=total_completed_items_paid,
-    completed_items_unpaid=total_completed_items_unpaid, Total_paid=total_paid,
+    completed_items_unpaid=total_completed_items_unpaid, total_cost=total_cost,
     completed_items=total_completed_items, uncompleted_items=total_uncompleted_items,
     payment_owed=payment_owed)
          

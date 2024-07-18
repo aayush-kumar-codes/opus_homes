@@ -54,7 +54,7 @@ class JobEntryDetails(models.Model):
         (1, 'Cheque'),
         (2, 'CC')
     )
-    items = models.CharField(max_length=50)
+    items = models.CharField(max_length=50, null=True)
     status = models.SmallIntegerField(choices=Status, default=0)
     cost = models.IntegerField(default=0)
     paid = models.SmallIntegerField(choices=Paid, default=0)
@@ -69,5 +69,6 @@ class JobentryDetailsRecord(models.Model):
     completed_items_paid = models.IntegerField(default=0)
     completed_items_unpaid = models.IntegerField(default=0)
     payment_owed = models.IntegerField(default=0)
-    Total_paid = models.IntegerField(default=0)
+    total_cost = models.IntegerField(default=0)
+    contract_amount_paid = models.IntegerField(default=0)
     job = models.OneToOneField(JobEntry, on_delete=models.CASCADE, related_name="records")
