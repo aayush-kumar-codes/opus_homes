@@ -250,6 +250,7 @@ import { useMemo } from "react";
 import { MRT_Table, useMaterialReactTable } from "material-react-table";
 import { axiosInstance } from "../../axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 const paymentData = [
   { value: "1", label: "Cheque" },
@@ -396,12 +397,19 @@ export const CustTable = ({
           },
         }),
         muiEditTextFieldProps: ({ cell, row }) => ({
-          type: "number",
+          type: "text",
+          pattern: "^[0-9]*$",
           required: true,
           // error: !!validationErrors?.[cell.id],
           // helperText: validationErrors?.[cell.id],
           //store edited user in state to be saved later
           disabled: row.original.id === "",
+          onChange:(event)=>{
+            const enteredValue = event.target.value.trim();
+            if (!/^[0-9]*$/.test(enteredValue)) {
+              toast.error("Invalid value. Please enter only numeric values.")
+            }
+          },
           onBlur: (event) => {
             // const validationError = !validateRequired(event.currentTarget.value)
             //   ? "Incorrect Value"
@@ -410,11 +418,16 @@ export const CustTable = ({
             //   ...validationErrors,
             //   [cell.id]: validationError,
             // });
-            handleSaveUsers(row.original, {
-              ...row._valuesCache,
-              cost: event.target.value,
-            });
-            setEditedUsers({ ...editedUsers, [row.id]: row.original });
+            const enteredValue = event.target.value.trim();
+            if (/^[0-9]*$/.test(enteredValue)) {
+              handleSaveUsers(row.original, {
+                ...row._valuesCache,
+                cost: enteredValue,
+              });
+              setEditedUsers({ ...editedUsers, [row.id]: row.original });
+            } else {
+              toast.error("Invalid value. Please enter only numeric values.")
+            }
           },
         }),
       },
