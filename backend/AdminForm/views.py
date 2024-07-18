@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import (JobFormSerializer,GetJobFormSerializer,
                              GettingJobEntryDetailsSerializer)
 
-from .models import JobEntry, JobEntryDetails
+from .models import JobEntry, JobEntryDetails, JobentryDetailsRecord
 from .utils import Building_item_list, record_updation
 
 
@@ -61,6 +61,16 @@ class GettingJobEntryDetails(APIView):
         job_record = record_updation(job_id)
         response = serializer.data
         return Response({"response": response, "job_record": job_record}, status=status.HTTP_200_OK)
+    
+    def post(self, request, job_id):
+        data=request.data.get('contract_amount_paid')
+        job = get_object_or_404(JobEntry, job_id=job_id)
+        job_entry_detail_records = get_object_or_404(JobentryDetailsRecord, job_id=job.id)
+        job_id = job.id
+        job_entry_detail_records.contract_amount_paid = data
+        job_entry_detail_records.save()
+        job_record = record_updation(job_id)
+        return Response(job_record, status=status.HTTP_200_OK)
     
     def patch(self, request, job_id, item_id):
         job = get_object_or_404(JobEntry, job_id=job_id)
