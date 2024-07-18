@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { axiosInstance } from "../../axios";
 import Cookies from "js-cookie";
 import {
@@ -26,11 +26,13 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ButtonComponent from "../../components/button";
 import dayjs from "dayjs";
+import { MyContext } from "../../context/ContextProvider";
 
 const NewJobEntry = () => {
   const [userData, setUserData] = useState([]);
   const [fetchedDataLoader, setFetchedDataLoader] = useState(false);
   const [loader, setLoader] = useState(false);
+  const {setNewJobSubmitted}=useContext(MyContext)
 
   const initialValues = {
     job_name: "",
@@ -66,6 +68,7 @@ const NewJobEntry = () => {
         });
         if (response.status) {
           console.log(response.data.message);
+          setNewJobSubmitted(true)
           toast.success("New Job Entry Registered Successfully", {
             position: "top-right",
             autoClose: 5000,
