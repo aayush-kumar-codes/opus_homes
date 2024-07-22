@@ -246,11 +246,12 @@
 
 // export default CustTable;
 
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { MRT_Table, useMaterialReactTable } from "material-react-table";
 import { axiosInstance } from "../../axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { MyContext } from "../../context/ContextProvider";
 
 const paymentData = [
   { value: "1", label: "Cheque" },
@@ -273,9 +274,12 @@ export const CustTable = ({
   fetchedData,
   setJobPageResponse,
 }) => {
+  const { setJobIdTable,setJobIdList,jobIdList, } = useContext(MyContext);
+  console.log(fetchedData, "tttt");
   const handleSaveUsers = async (original, values) => {
     console.log(values, "gotcha");
-
+    setJobIdTable(Cookies.get("job_id"));
+    setJobIdList([...jobIdList, Cookies.get("job_id")])
     const data = {
       id: values.id || original.id,
       items: values.items || original.items,
@@ -336,7 +340,7 @@ export const CustTable = ({
             border: "1px solid rgba(81, 81, 81, .5)",
             py: "2px",
             bgcolor: row.original.id === "" ? "#cceeff" : "inherit",
-            fontWeight:row.original.id !== "" ?"none":600
+            fontWeight: row.original.id !== "" ? "none" : 600,
           },
         }),
         muiEditTextFieldProps: ({ cell, row }) => ({
@@ -404,10 +408,10 @@ export const CustTable = ({
           // helperText: validationErrors?.[cell.id],
           //store edited user in state to be saved later
           disabled: row.original.id === "",
-          onChange:(event)=>{
+          onChange: (event) => {
             const enteredValue = event.target.value.trim();
             if (!/^[0-9]*$/.test(enteredValue)) {
-              toast.error("Invalid value. Please enter only numeric values.")
+              toast.error("Invalid value. Please enter only numeric values.");
             }
           },
           onBlur: (event) => {
@@ -426,7 +430,7 @@ export const CustTable = ({
               });
               setEditedUsers({ ...editedUsers, [row.id]: row.original });
             } else {
-              toast.error("Invalid value. Please enter only numeric values.")
+              toast.error("Invalid value. Please enter only numeric values.");
             }
           },
         }),

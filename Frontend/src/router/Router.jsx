@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Login from "../pages/login";
 import Register from "../pages/register";
-import MiniDrawer from "../components/drawer";
 import CRMForm from "../pages/dashboard/crmform";
 import LayoutCompnent from "./layout";
 import ProfileDetails from "../pages/dashboard/profiledetails";
@@ -15,7 +14,7 @@ import ProjectMangementDetails from "../pages/dashboard/projectmangementdetails"
 import NewJobEntry from "../pages/dashboard/newjobentry";
 import JobList from "../pages/dashboard/joblist";
 import JobPage from "../pages/dashboard/jobpage";
-import CustTable from "../components/table/jobpagetable";
+import HeroBanner from "../pages/dashboard/herobanner";
 
 export const Router = createBrowserRouter([
   {
@@ -33,8 +32,8 @@ export const Router = createBrowserRouter([
     path: "/dashboard",
     element: <LayoutCompnent />,
     children: [
-      { path: "", element: <CRMForm /> },
-      // { path: "", element: <CustTable /> },
+      { path: "", element: <HeroBanner /> },
+      { path: "crm", element: <CRMForm /> },
       { path: "projectmanagement", element: <ProjectManagement /> },
       {
         path: "projectmanagementdetails",
