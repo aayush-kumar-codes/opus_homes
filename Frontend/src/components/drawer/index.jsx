@@ -43,6 +43,10 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { axiosInstance } from "../../axios";
 import { MyContext } from "../../context/ContextProvider";
+import { dispatch } from "../../redux/store/Store";
+import { fetched0Data1 } from "../../redux/reducers/jobPageSlice";
+import { useSelector } from "react-redux";
+import { JobPageEntry } from "../../redux/reducers/jobPageSliceTwo";
 
 const drawerWidth = 240;
 
@@ -118,7 +122,17 @@ export default function MiniDrawer({ pages }) {
   const location = useLocation();
   const [userData, setUserData] = React.useState([]);
   const [jobListView, setJobListView] = React.useState(true);
-  const {newJobSubmitted,setNewJobSubmitted,setJobListStatus}=React.useContext(MyContext)
+  const {
+    newJobSubmitted,
+    setNewJobSubmitted,
+    setJobListStatus,
+    setJobIdTable,
+    jobIdTable,
+    setJobIdList,
+    jobIdList,
+  } = React.useContext(MyContext);
+  const job = useSelector((state) => state.jobPageSlice);
+  const jobEntry = useSelector((state) => state.jobPageSliceTwo);
 
   React.useEffect(() => {
     const data = async () => {
@@ -135,7 +149,7 @@ export default function MiniDrawer({ pages }) {
       } catch (error) {
         console.log(error);
       }
-      setNewJobSubmitted(false)
+      setNewJobSubmitted(false);
     };
     data();
   }, [newJobSubmitted]);
@@ -177,9 +191,33 @@ export default function MiniDrawer({ pages }) {
   };
 
   const handleJobPage = (id) => {
-    setJobListStatus(true)
     Cookies.set("job_id", id);
-    navigate(`/dashboard/jobpage/${id}`);
+    const condition1 = job.data.some((e) => e.job_id === id);
+    const condition2 = jobEntry.data.some((e) => e.job_record.job_id === id);
+    if (job) {
+      if (!condition1) {
+        dispatch(fetched0Data1());
+      }
+    }
+    if (jobEntry) {
+      if (condition2 && jobIdList.includes(Cookies.get("job_id"))) {
+        dispatch(JobPageEntry());
+        const index = jobIdList.findIndex(
+          (item) => item === Cookies.get("job_id")
+        );
+        console.log(index, "index");
+        if (index !== -1) {
+          setJobIdList(jobIdList.filter((jobId) => jobId !== jobIdList[index]));
+        }
+      }
+      if (!condition2) {
+        dispatch(JobPageEntry());
+      }
+    }
+    setTimeout(() => {
+      navigate(`/dashboard/jobpage/${id}`);
+      setJobListStatus(true);
+    }, 1000);
   };
 
   return (
@@ -229,11 +267,6 @@ export default function MiniDrawer({ pages }) {
               <List sx={{ display: "flex" }}>
                 {[
                   {
-                    name: "CRM system",
-                    path: "",
-                    icons: <Book />,
-                  },
-                  {
                     name: "Project Management ",
                     path: "projectmanagement",
                     icons: <BusinessCenter />,
@@ -252,6 +285,11 @@ export default function MiniDrawer({ pages }) {
                     name: "Project update",
                     path: "projectupdate",
                     icons: <AutoGraph />,
+                  },
+                  {
+                    name: "CRM system",
+                    path: "crm",
+                    icons: <Book />,
                   },
                 ].map((text, index) => (
                   <NavLink
@@ -475,11 +513,6 @@ export default function MiniDrawer({ pages }) {
           >
             {[
               {
-                name: "CRM system",
-                path: "",
-                icons: <Book />,
-              },
-              {
                 name: "Project Management ",
                 path: "projectmanagement",
                 icons: <BusinessCenter />,
@@ -498,6 +531,11 @@ export default function MiniDrawer({ pages }) {
                 name: "Project update",
                 path: "projectupdate",
                 icons: <AutoGraph />,
+              },
+              {
+                name: "CRM system",
+                path: "crm",
+                icons: <Book />,
               },
               // {
               //   name: "Job List",
@@ -563,166 +601,169 @@ export default function MiniDrawer({ pages }) {
                 </Tooltip>
               </NavLink>
             ))}
-            <List sx={{top:"-8px",left:"1.5px"}}>
-            {[
-              {
-                name: "Job List",
-                icon: <ListAlt />,
-              },
-            ].map((text, index) => (
-              <Box
-                onClick={() => setJobListView(!jobListView)}
-                key={index}
-                style={{ color: "black", textDecoration: "none" }}
-              >
-                <Tooltip
-                  title={
-                    text.name === "New Job Entry"
-                      ? "New Job Entry (Only Admins Have Access To Submit)"
-                      : text.name
-                  }
-                  placement="right-start"
+            <List sx={{ top: "-8px", left: "1.5px" }}>
+              {[
+                {
+                  name: "Job List",
+                  icon: <ListAlt />,
+                },
+              ].map((text, index) => (
+                <Box
+                  onClick={() => setJobListView(!jobListView)}
+                  key={index}
+                  style={{ color: "black", textDecoration: "none" }}
                 >
-                  <ListItem
-                    disablePadding
-                    sx={{
-                      display: {
-                        xs: text.path === "joblist" ? "none" : "block",
-                        md: "block",
-                      },
-                    }}
+                  <Tooltip
+                    title={
+                      text.name === "New Job Entry"
+                        ? "New Job Entry (Only Admins Have Access To Submit)"
+                        : text.name
+                    }
+                    placement="right-start"
                   >
-                    <ListItemButton
+                    <ListItem
+                      disablePadding
                       sx={{
-                        minHeight: 48,
-                        justifyContent: open ? "initial" : "center",
-                        px: 2.5,
+                        display: {
+                          xs: text.path === "joblist" ? "none" : "block",
+                          md: "block",
+                        },
                       }}
                     >
-                      <ListItemIcon
+                      <ListItemButton
                         sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : "auto",
-                          justifyContent: "center",
+                          minHeight: 48,
+                          justifyContent: open ? "initial" : "center",
+                          px: 2.5,
                         }}
                       >
-                        {text.icon}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={text.name}
-                        sx={{ opacity: open ? 1 : 0 }}
-                      />
-                      {open && <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          ml: open ? 4 : "auto",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {jobListView ? <ExpandMore/>:<ExpandLess/>}
-                      </ListItemIcon>}
-                    </ListItemButton>
-                  </ListItem>
-                </Tooltip>
-              </Box>
-            ))}
-            {jobListView && (
-            <List sx={{ ml: open?1:0 }}>
-              {
-                // [
-                //   {
-                //     name: "Job List",
-                //     path: "joblist",
-                //     icon: <ListAlt />,
-                //   },
-
-                // {
-                //   name: "Profile Edit",
-                //   path: "editprofile",
-                //   icon: <Person2Icon />,
-                // },
-                // {
-                //   name: "Logout",
-                //   icon: <LogoutIcon />,
-                //   onclick: () => {
-                //     Cookies.remove("token");
-                //     Cookies.remove("job_id");
-                //     Cookies.remove("user_role");
-
-                //     navigate("/", { replace: true });
-                //   },
-                // },
-                // ]
-                userData?.map((text, index) => (
-                  <Box
-                    onClick={() => handleJobPage(text.job_id)}
-                    key={index}
-                    // to={()=>handleJobPage(text.job_id)}
-                    style={{ color: "black", textDecoration: "none" }}
-                  >
-                    <Tooltip
-                      title={
-                        text.name === "New Job Entry"
-                          ? "New Job Entry (Only Admins Have Access To Submit)"
-                          : text.job_name
-                      }
-                      placement="right-start"
-                    >
-                      <ListItem
-                        disablePadding
-                        sx={{
-                          display: {
-                            xs: text.path === "joblist" ? "none" : "block",
-                            md: "block",
-                          },
-                          borderBottom:
-                            location.pathname ===
-                              "/dashboard/jobpage/" + text.job_id &&
-                            "3px solid transparent",
-                          borderImage:
-                            "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
-                          borderImageSlice: 1,
-                          ":hover": {
-                            borderImageSlice: 1,
-                            borderBottom: "3px solid transparent",
-                          },
-                          bgcolor:
-                            location.pathname ===
-                              "/dashboard/jobpage/" + text.job_id && "#F5F5F5",
-                        }}
-                      >
-                        <ListItemButton
+                        <ListItemIcon
                           sx={{
-                            minHeight: 48,
-                            justifyContent: open ? "initial" : "center",
-                            px: 2.5,
+                            minWidth: 0,
+                            mr: open ? 3 : "auto",
+                            justifyContent: "center",
                           }}
                         >
+                          {text.icon}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={text.name}
+                          sx={{ opacity: open ? 1 : 0 }}
+                        />
+                        {open && (
                           <ListItemIcon
                             sx={{
                               minWidth: 0,
-                              mr: open ? 3 : "auto",
+                              ml: open ? 4 : "auto",
                               justifyContent: "center",
                             }}
                           >
-                            <ContactEmergency />
+                            {jobListView ? <ExpandLess /> : <ExpandMore />}
                           </ListItemIcon>
-                          <ListItemText
-                            primary={text.job_name}
-                            sx={{ opacity: open ? 1 : 0 }}
-                          />
-                        </ListItemButton>
-                      </ListItem>
-                    </Tooltip>
-                  </Box>
-                ))
-              }
+                        )}
+                      </ListItemButton>
+                    </ListItem>
+                  </Tooltip>
+                </Box>
+              ))}
+              {jobListView && (
+                <List sx={{ ml: open ? 1 : 0 }}>
+                  {
+                    // [
+                    //   {
+                    //     name: "Job List",
+                    //     path: "joblist",
+                    //     icon: <ListAlt />,
+                    //   },
+
+                    // {
+                    //   name: "Profile Edit",
+                    //   path: "editprofile",
+                    //   icon: <Person2Icon />,
+                    // },
+                    // {
+                    //   name: "Logout",
+                    //   icon: <LogoutIcon />,
+                    //   onclick: () => {
+                    //     Cookies.remove("token");
+                    //     Cookies.remove("job_id");
+                    //     Cookies.remove("user_role");
+
+                    //     navigate("/", { replace: true });
+                    //   },
+                    // },
+                    // ]
+                    userData?.map((text, index) => (
+                      <Box
+                        onClick={() => handleJobPage(text.job_id)}
+                        key={index}
+                        // to={()=>handleJobPage(text.job_id)}
+                        style={{ color: "black", textDecoration: "none" }}
+                      >
+                        <Tooltip
+                          title={
+                            text.name === "New Job Entry"
+                              ? "New Job Entry (Only Admins Have Access To Submit)"
+                              : text.job_name
+                          }
+                          placement="right-start"
+                        >
+                          <ListItem
+                            disablePadding
+                            sx={{
+                              display: {
+                                xs: text.path === "joblist" ? "none" : "block",
+                                md: "block",
+                              },
+                              borderBottom:
+                                location.pathname ===
+                                  "/dashboard/jobpage/" + text.job_id &&
+                                "3px solid transparent",
+                              borderImage:
+                                "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
+                              borderImageSlice: 1,
+                              ":hover": {
+                                borderImageSlice: 1,
+                                borderBottom: "3px solid transparent",
+                              },
+                              bgcolor:
+                                location.pathname ===
+                                  "/dashboard/jobpage/" + text.job_id &&
+                                "#F5F5F5",
+                            }}
+                          >
+                            <ListItemButton
+                              sx={{
+                                minHeight: 48,
+                                justifyContent: open ? "initial" : "center",
+                                px: 2.5,
+                              }}
+                            >
+                              <ListItemIcon
+                                sx={{
+                                  minWidth: 0,
+                                  mr: open ? 3 : "auto",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <ContactEmergency />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={text.job_name}
+                                sx={{ opacity: open ? 1 : 0 }}
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        </Tooltip>
+                      </Box>
+                    ))
+                  }
+                </List>
+              )}
             </List>
-          )}
-          </List>  
           </List>
           {/* <Divider /> */}
-          <List sx={{display:{xs:"none",md:"block"}}}>
+          <List sx={{ display: { xs: "none", md: "block" } }}>
             {[
               {
                 name: "Job List",
@@ -771,114 +812,117 @@ export default function MiniDrawer({ pages }) {
                         primary={text.name}
                         sx={{ opacity: open ? 1 : 0 }}
                       />
-                      {open && <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          ml: open ? 3 : "auto",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {jobListView ? <ExpandMore/>:<ExpandLess/>}
-                      </ListItemIcon>}
+                      {open && (
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            ml: open ? 3 : "auto",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {jobListView ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemIcon>
+                      )}
                     </ListItemButton>
                   </ListItem>
                 </Tooltip>
               </Box>
             ))}
             {jobListView && (
-            <List sx={{ ml: open?1:0 }}>
-              {
-                // [
-                //   {
-                //     name: "Job List",
-                //     path: "joblist",
-                //     icon: <ListAlt />,
-                //   },
+              <List sx={{ ml: open ? 1 : 0 }}>
+                {
+                  // [
+                  //   {
+                  //     name: "Job List",
+                  //     path: "joblist",
+                  //     icon: <ListAlt />,
+                  //   },
 
-                // {
-                //   name: "Profile Edit",
-                //   path: "editprofile",
-                //   icon: <Person2Icon />,
-                // },
-                // {
-                //   name: "Logout",
-                //   icon: <LogoutIcon />,
-                //   onclick: () => {
-                //     Cookies.remove("token");
-                //     Cookies.remove("job_id");
-                //     Cookies.remove("user_role");
+                  // {
+                  //   name: "Profile Edit",
+                  //   path: "editprofile",
+                  //   icon: <Person2Icon />,
+                  // },
+                  // {
+                  //   name: "Logout",
+                  //   icon: <LogoutIcon />,
+                  //   onclick: () => {
+                  //     Cookies.remove("token");
+                  //     Cookies.remove("job_id");
+                  //     Cookies.remove("user_role");
 
-                //     navigate("/", { replace: true });
-                //   },
-                // },
-                // ]
-                userData?.map((text, index) => (
-                  <Box
-                    onClick={() => handleJobPage(text.job_id)}
-                    key={index}
-                    // to={()=>handleJobPage(text.job_id)}
-                    style={{ color: "black", textDecoration: "none" }}
-                  >
-                    <Tooltip
-                      title={
-                        text.name === "New Job Entry"
-                          ? "New Job Entry (Only Admins Have Access To Submit)"
-                          : text.job_name
-                      }
-                      placement="right-start"
+                  //     navigate("/", { replace: true });
+                  //   },
+                  // },
+                  // ]
+                  userData?.map((text, index) => (
+                    <Box
+                      onClick={() => handleJobPage(text.job_id)}
+                      key={index}
+                      // to={()=>handleJobPage(text.job_id)}
+                      style={{ color: "black", textDecoration: "none" }}
                     >
-                      <ListItem
-                        disablePadding
-                        sx={{
-                          display: {
-                            xs: text.path === "joblist" ? "none" : "block",
-                            md: "block",
-                          },
-                          borderBottom:
-                            location.pathname ===
-                              "/dashboard/jobpage/" + text.job_id &&
-                            "3px solid transparent",
-                          borderImage:
-                            "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
-                          borderImageSlice: 1,
-                          ":hover": {
-                            borderImageSlice: 1,
-                            borderBottom: "3px solid transparent",
-                          },
-                          bgcolor:
-                            location.pathname ===
-                              "/dashboard/jobpage/" + text.job_id && "#F5F5F5",
-                        }}
+                      <Tooltip
+                        title={
+                          text.name === "New Job Entry"
+                            ? "New Job Entry (Only Admins Have Access To Submit)"
+                            : text.job_name
+                        }
+                        placement="right-start"
                       >
-                        <ListItemButton
+                        <ListItem
+                          disablePadding
                           sx={{
-                            minHeight: 48,
-                            justifyContent: open ? "initial" : "center",
-                            px: 2.5,
+                            display: {
+                              xs: text.path === "joblist" ? "none" : "block",
+                              md: "block",
+                            },
+                            borderBottom:
+                              location.pathname ===
+                                "/dashboard/jobpage/" + text.job_id &&
+                              "3px solid transparent",
+                            borderImage:
+                              "linear-gradient(to right, rgba(255, 255, 255, 0.2),#000)",
+                            borderImageSlice: 1,
+                            ":hover": {
+                              borderImageSlice: 1,
+                              borderBottom: "3px solid transparent",
+                            },
+                            bgcolor:
+                              location.pathname ===
+                                "/dashboard/jobpage/" + text.job_id &&
+                              "#F5F5F5",
                           }}
                         >
-                          <ListItemIcon
+                          <ListItemButton
                             sx={{
-                              minWidth: 0,
-                              mr: open ? 3 : "auto",
-                              justifyContent: "center",
+                              minHeight: 48,
+                              justifyContent: open ? "initial" : "center",
+                              px: 2.5,
                             }}
                           >
-                            <ContactEmergency />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={text.job_name}
-                            sx={{ opacity: open ? 1 : 0 }}
-                          />
-                        </ListItemButton>
-                      </ListItem>
-                    </Tooltip>
-                  </Box>
-                ))
-              }
-            </List>
-          )}
-          </List>         
+                            <ListItemIcon
+                              sx={{
+                                minWidth: 0,
+                                mr: open ? 3 : "auto",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <ContactEmergency />
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={text.job_name}
+                              sx={{ opacity: open ? 1 : 0 }}
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                      </Tooltip>
+                    </Box>
+                  ))
+                }
+              </List>
+            )}
+          </List>
         </Stack>
       </Drawer>
       <Box
