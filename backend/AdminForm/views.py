@@ -59,6 +59,7 @@ class GettingJobEntryDetails(APIView):
         job_table = JobEntryDetails.objects.filter(job_id=job_id)
         serializer = GettingJobEntryDetailsSerializer(job_table, many=True)
         job_record = record_updation(job_id)
+        job_record["job_id"] = job.job_id
         response = serializer.data
         return Response({"response": response, "job_record": job_record}, status=status.HTTP_200_OK)
     
