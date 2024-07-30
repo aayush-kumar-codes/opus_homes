@@ -23,6 +23,7 @@ import {
   JobPageEntry,
   resetSliceReducer2,
 } from "../../redux/reducers/jobPageSliceTwo";
+import { useNavigate } from "react-router-dom";
 
 const JobPage = () => {
   const [userData, setUserData] = useState([]);
@@ -36,8 +37,15 @@ const JobPage = () => {
     {}
   );
   const [loading, setLoading] = useState(false);
-  const { jobListStatus, setJobListStatus, jobIdList,
-    setJobIdList, } = useContext(MyContext);
+  
+  const navigate = useNavigate();
+  const {
+    jobListStatus,
+    setJobListStatus,
+    jobIdList,
+    setJobIdList,
+    setDeletedJob,
+  } = useContext(MyContext);
   const job = useSelector((state) => state.jobPageSlice);
   const jobEntry = useSelector((state) => state.jobPageSliceTwo);
 
@@ -84,7 +92,7 @@ const JobPage = () => {
   useEffect(() => {
     if ((job.isSuccess && jobEntry.isSuccess) || jobListStatus) {
       setFetchedDataLoader(true);
-      setContractAmountPaidStatus(false)
+      setContractAmountPaidStatus(false);
       console.log(job.data, jobEntry.data, "oooyyyujytuyg");
       if (job.data.length !== 0) {
         const filterData = job.data.filter(
@@ -160,7 +168,7 @@ const JobPage = () => {
   };
 
   const handleContractAmoundPaid = async (value) => {
-    setJobIdList([...jobIdList, Cookies.get("job_id")])
+    setJobIdList([...jobIdList, Cookies.get("job_id")]);
     const data = {
       contract_amount_paid: value,
     };
@@ -184,6 +192,40 @@ const JobPage = () => {
     }
   };
 
+  const handleDelete = (id) => {
+    const data = async () => {
+      try {
+        const response = await axiosInstance.delete(`admin-form/${id}/`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+        console.log(response, "jbhv");
+        if (response.status) {
+          setJobIdList(
+            jobIdList.filter((jobId) => jobId !== Cookies.get("job_id"))
+          );
+          Cookies.remove("job_id");
+          setTimeout(() => {
+            navigate(`/dashboard`);
+          }, 1000);
+          setDeletedJob(true);
+          toast.success(response.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      }
+    };
+    data();
+  };
+
   return (
     <Box>
       <Typography
@@ -193,6 +235,30 @@ const JobPage = () => {
       >
         Job Page
       </Typography>
+      {!fetchedDataLoader &&  userData?.job_name ? (
+        <Stack
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "end",
+            width: "78%",
+            my: 1,
+          }}
+        >
+          <ButtonComponent
+            text={"Delete"}
+            onClick={() => handleDelete(Cookies.get("job_id"))}
+            styles={{
+              color: "white",
+              bgcolor: "red",
+              ":hover": { color: "#000", cursor: "pointer" },
+            }}
+          />
+        </Stack>
+      ) : (
+        ""
+      )}
+
       {fetchedDataLoader ? (
         <Box textAlign={"center"}>
           {" "}

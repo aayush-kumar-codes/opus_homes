@@ -7,6 +7,7 @@ const ContextProvider = ({ children }) => {
   const [jobListStatus, setJobListStatus] = useState(false);
   const [jobIdTable, setJobIdTable] = useState("");
   const [jobIdList, setJobIdList] = useState([]);
+  const [deletedJob,setDeletedJob]=useState(false)
   return (
     <MyContext.Provider
       value={{
@@ -18,6 +19,8 @@ const ContextProvider = ({ children }) => {
         setJobIdTable,
         jobIdList,
         setJobIdList,
+        deletedJob,
+        setDeletedJob
       }}
     >
       {children}
