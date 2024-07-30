@@ -130,6 +130,8 @@ export default function MiniDrawer({ pages }) {
     jobIdTable,
     setJobIdList,
     jobIdList,
+    deletedJob,
+    setDeletedJob
   } = React.useContext(MyContext);
   const job = useSelector((state) => state.jobPageSlice);
   const jobEntry = useSelector((state) => state.jobPageSliceTwo);
@@ -150,9 +152,10 @@ export default function MiniDrawer({ pages }) {
         console.log(error);
       }
       setNewJobSubmitted(false);
+      setDeletedJob(false)
     };
     data();
-  }, [newJobSubmitted]);
+  }, [newJobSubmitted,deletedJob]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
