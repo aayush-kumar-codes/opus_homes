@@ -5,8 +5,10 @@ import {
   Box,
   CircularProgress,
   Grid,
+  Popover,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
@@ -23,6 +25,7 @@ import {
   JobPageEntry,
   resetSliceReducer2,
 } from "../../redux/reducers/jobPageSliceTwo";
+import { MoreVert } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const JobPage = () => {
@@ -37,7 +40,7 @@ const JobPage = () => {
     {}
   );
   const [loading, setLoading] = useState(false);
-  
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate();
   const {
     jobListStatus,
@@ -63,6 +66,17 @@ const JobPage = () => {
     "Drywall",
     "Flooring Labor",
   ];
+
+  const openProfile = Boolean(anchorEl);
+  const id = openProfile ? "simple-popover" : undefined;
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const addRowsAfterItems = (data) => {
     let newData = [];
@@ -235,7 +249,7 @@ const JobPage = () => {
       >
         Job Page
       </Typography>
-      {!fetchedDataLoader &&  userData?.job_name ? (
+      {!fetchedDataLoader && userData?.job_name ? (
         <Stack
           sx={{
             display: "flex",
@@ -245,15 +259,49 @@ const JobPage = () => {
             my: 1,
           }}
         >
-          <ButtonComponent
-            text={"Delete"}
-            onClick={() => handleDelete(Cookies.get("job_id"))}
-            styles={{
-              color: "white",
-              bgcolor: "red",
-              ":hover": { color: "#000", cursor: "pointer" },
+          <Tooltip title="action to delete" placement="right-start">
+            <MoreVert
+              onClick={handleClick}
+              sx={{
+                ":hover": {
+                  cursor: "pointer",
+                },
+              }}
+            />
+          </Tooltip>
+
+          <Popover
+            id={id}
+            open={openProfile}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
             }}
-          />
+          >
+            <Box
+              sx={{
+                p: 2,
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                ":hover": {
+                  bgcolor: "#EDEDED",
+                },
+              }}
+            >
+              <ButtonComponent
+                text={"Delete"}
+                onClick={() => handleDelete(Cookies.get("job_id"))}
+                styles={{
+                  color: "white",
+                  bgcolor: "red",
+                  ":hover": { color: "#000", cursor: "pointer" },
+                }}
+              />
+            </Box>
+          </Popover>
         </Stack>
       ) : (
         ""
